@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e0c0a">
+<title>Сертификаты Lara lashes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap">
+<style>
+  /* Тёмный «бутик»: вкладки сверху; «Новый» — форма слева и живое превью справа (на телефоне — друг под другом). */
+  :root {
+    --bg: #0e0c0a; --panel: #171411; --line: #3a3127; --gold: #c9a960; --gold-hi: #e0c78e;
+    --text: #e9e1d2; --muted: #a8977a; --ok: #8fbf7a; --warn: #e2b45a; --bad: #e08a6a;
+    --display: "Cormorant Garamond", "Times New Roman", serif;
+    --script: "Great Vibes", "Segoe Script", cursive;
+    --ui: "Montserrat", "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--ui); font-size: 15px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-top: calc(22px + env(safe-area-inset-top, 0px)); padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-family: var(--script); font-weight: 400; font-size: 46px; color: var(--gold-hi); line-height: 1; }
+  header p { margin: 0; color: var(--muted); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .pinbar { margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+  .pinbar input { width: 110px; }
+  .linkbtn { background: none; border: 0; color: var(--gold); padding: 4px 2px; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; letter-spacing: 0; text-transform: none; }
+
+  nav { display: flex; gap: 6px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  nav button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 12px 14px; font: inherit; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; border-radius: 0; white-space: nowrap; }
+  nav button[aria-selected="true"] { color: var(--gold-hi); border-bottom-color: var(--gold); }
+
+  .grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 36px; align-items: start; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  input, select { width: 100%; font: inherit; font-size: 16px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 11px 12px; min-width: 0; }
+  input:disabled, select:disabled { opacity: .6; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .hint { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+  .big { font-family: var(--display); font-size: 22px; color: var(--gold-hi); }
+  .actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn { font: inherit; font-size: 13.5px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; border-radius: 10px; padding: 14px 16px; border: 1px solid var(--gold); background: linear-gradient(100deg, #9c7a3c, #d9bd7c 45%, #a8843f); color: #17120c; font-weight: 500; }
+  .btn.ghost { background: transparent; color: var(--gold-hi); }
+  .btn:disabled { opacity: .5; cursor: progress; }
+  .btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btnrow .btn { flex: 1 1 140px; }
+  .status { min-height: 1.3em; font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+  .status.err { color: var(--bad); }
+  .status.ok { color: var(--ok); }
+  .preview { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 10px; align-items: center; min-width: 0; }
+  .preview img { width: 100%; max-width: 560px; aspect-ratio: 1200 / 1650; height: auto; border-radius: 6px; box-shadow: 0 18px 50px rgba(0, 0, 0, .55); background: #14110e; }
+
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .card .no { font-family: var(--display); font-size: 30px; color: var(--gold-hi); }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 14.5px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .chip { display: inline-block; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; padding: 5px 10px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+  .chip.ok { color: var(--ok); } .chip.warn { color: var(--warn); } .chip.bad { color: var(--bad); }
+  .confirm { border: 1px solid var(--warn); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+  .list { display: flex; flex-direction: column; }
+  .item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; color: inherit; font: inherit; text-align: left; width: 100%; }
+  .item:hover { background: rgba(201, 169, 96, .06); }
+  .item .n { font-family: var(--display); font-size: 22px; color: var(--gold-hi); font-variant-numeric: tabular-nums; }
+  .item .w { min-width: 0; }
+  .item .w b { display: block; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item .w span { font-size: 12.5px; color: var(--muted); }
+  .narrow { max-width: 560px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } .preview { position: static; } }
+  @media (max-width: 420px) { .row { grid-template-columns: 1fr; } .pinbar { margin-left: 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Lara lashes</h1><p>подарочные сертификаты</p>
+    <div class="pinbar" id="pinbar"></div>
+  </header>
+
+  <nav role="tablist">
+    <button role="tab" id="tab-new" aria-selected="true" data-tab="new">Новый</button>
+    <button role="tab" id="tab-check" aria-selected="false" data-tab="check">Проверить</button>
+    <button role="tab" id="tab-log" aria-selected="false" data-tab="log">Журнал</button>
+  </nav>
+
+  <!-- Новый сертификат -->
+  <section id="view-new" class="grid">
+    <form class="panel" id="form" novalidate>
+      <div class="field">
+        <label for="who">Кому дарится (ФИО)</label>
+        <input id="who" type="text" autocomplete="off" maxlength="60" placeholder="Например, Мария Иванова">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="sum">Сумма, руб.</label>
+          <input id="sum" type="number" inputmode="numeric" min="100" step="100" value="3000">
+        </div>
+        <div class="field">
+          <label>Номер</label>
+          <span class="big" id="noView">выдаст таблица</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="issued">Дата выдачи</label>
+          <input id="issued" type="date">
+        </div>
+        <div class="field">
+          <label for="term">Срок действия</label>
+          <select id="term">
+            <option value="1">1 месяц</option>
+            <option value="2">2 месяца</option>
+            <option value="3">3 месяца</option>
+            <option value="6" selected>6 месяцев</option>
+            <option value="12">12 месяцев</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Действителен до</label>
+        <span class="big" id="until">—</span>
+      </div>
+      <div class="actions">
+        <button class="btn" type="submit" id="issue">Выписать сертификат</button>
+        <div class="btnrow" id="afterIssue" hidden>
+          <button class="btn" type="button" id="download">Скачать</button>
+          <button class="btn" type="button" id="share" hidden>Отправить</button>
+        </div>
+        <button class="btn ghost" type="button" id="again" hidden>Новый сертификат</button>
+        <div class="status" id="status" role="status"></div>
+      </div>
+    </form>
+    <div class="preview">
+      <img id="pic" alt="Подарочный сертификат">
+      <span class="hint">Картинка 2400 × 3300 — для отправки и для печати</span>
+    </div>
+  </section>
+
+  <!-- Проверить и погасить -->
+  <section id="view-check" class="narrow" hidden>
+    <form class="panel" id="checkForm" novalidate>
+      <div class="field">
+        <label for="checkNo">Номер сертификата</label>
+        <input id="checkNo" type="text" inputmode="numeric" placeholder="Например, 7">
+      </div>
+      <button class="btn" type="submit" id="checkBtn">Проверить</button>
+      <div class="status" id="checkStatus" role="status"></div>
+      <div id="checkResult"></div>
+    </form>
+  </section>
+
+  <!-- Журнал -->
+  <section id="view-log" hidden>
+    <div class="panel">
+      <div class="btnrow"><button class="btn ghost" type="button" id="reload">Обновить</button></div>
+      <div class="status" id="logStatus" role="status"></div>
+      <div class="list" id="log"></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+// Адрес веб-приложения Google Apps Script (таблица сертификатов).
+const API_URL = "";
+
+const W = 1200, H = 1650, SCALE = 2;
+const MASTER = "Чурилова Лариса", PHONE = "+7 (906) 091-85-96", TG = "https://t.me/Lara_lashes", TG_TEXT = "t.me/Lara_lashes";
+const $ = id => document.getElementById(id);
+const canvas = document.createElement("canvas");
+canvas.width = W * SCALE; canvas.height = H * SCALE;
+const ctx = canvas.getContext("2d");
+
+// ---------- даты и форматы ----------
+const pad = n => String(n).padStart(2, "0");
+const isoToday = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+function addMonths(iso, months) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const t = new Date(y, m - 1 + months, 1);
+  t.setDate(Math.min(d, new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate()));   // 31.08 + 6 мес → конец февраля
+  return t;
+}
+const toIso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const ruDate = iso => { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}.${m}.${y}`; };
+const noFmt = n => String(n).padStart(3, "0");
+const money = n => (n >= 10000 ? Number(n).toLocaleString("ru-RU") : String(n)) + " руб.";
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+};
+
+// ---------- рисование сертификата ----------
+function gold(x0, x1) {
+  const g = ctx.createLinearGradient(x0, 0, x1, 0);
+  g.addColorStop(0, "#9c7a3c"); g.addColorStop(.35, "#e0c78e"); g.addColorStop(.65, "#a8843f"); g.addColorStop(1, "#d9bd7c");
+  return g;
+}
+function spaced(text, cx, y, font, spacing, fill) {          // разрядка вручную — работает во всех браузерах
+  ctx.font = font;
+  const chars = [...text], ws = chars.map(c => ctx.measureText(c).width);
+  const total = ws.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
+  let x = cx - total / 2;
+  ctx.fillStyle = fill === "gold" ? gold(x, x + total) : fill; ctx.textAlign = "left";
+  chars.forEach((c, i) => { ctx.fillText(c, x, y); x += ws[i] + spacing; });
+}
+function centered(text, cx, y, font, fill, maxW) {
+  ctx.font = font;
+  let w = ctx.measureText(text).width;
+  if (maxW && w > maxW) {                                     // длинное ФИО — уменьшаем кегль
+    const size = parseFloat(font.match(/(\d+(?:\.\d+)?)px/)[1]) * maxW / w;
+    ctx.font = font.replace(/\d+(?:\.\d+)?px/, size.toFixed(1) + "px");
+    w = ctx.measureText(text).width;
+  }
+  ctx.textAlign = "left"; ctx.fillStyle = fill === "gold" ? gold(cx - w / 2, cx + w / 2) : fill;
+  ctx.fillText(text, cx - w / 2, y);
+}
+function eye(cx, top, width) {                                // закрытый глаз с ресницами
+  const k = width / 470;
+  ctx.save(); ctx.translate(cx - width / 2, top); ctx.scale(k, k); ctx.translate(20, 60);
+  const g = ctx.createLinearGradient(0, 0, 400, 0);
+  g.addColorStop(0, "#9c7a3c"); g.addColorStop(.35, "#e0c78e"); g.addColorStop(.65, "#a8843f"); g.addColorStop(1, "#d9bd7c");
+  ctx.strokeStyle = g; ctx.lineCap = "round";
+  ctx.globalAlpha = .6; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(40, -14); ctx.quadraticCurveTo(200, -52, 365, -6); ctx.stroke();
+  ctx.globalAlpha = 1;
+  const x0 = 20, x1 = 380, y = 40, cy = 150;
+  const P = t => ({ x: (1-t)*(1-t)*x0 + 2*(1-t)*t*200 + t*t*x1, y: (1-t)*(1-t)*y + 2*(1-t)*t*cy + t*t*y });
+  const D = t => ({ x: 2*(1-t)*(200-x0) + 2*t*(x1-200), y: 2*(1-t)*(cy-y) + 2*t*(y-cy) });
+  ctx.lineWidth = 2.6;
+  for (let i = 0, n = 24; i < n; i++) {
+    const t = 0.1 + i * (0.86 / (n - 1)), p = P(t), d = D(t), len = Math.hypot(d.x, d.y);
+    let nx = -d.y / len, ny = d.x / len; if (ny < 0) { nx = -nx; ny = -ny; }
+    const L = 34 + 78 * Math.pow(t, 1.5), lean = (t - 0.3) * 0.9;
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+    ctx.quadraticCurveTo(p.x + nx*L*0.65 + lean*L*0.25, p.y + ny*L*0.65, p.x + nx*L + lean*L*0.9 + 6, p.y + ny*L*0.78 - 4);
+    ctx.stroke();
+  }
+  ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(x0, y); ctx.quadraticCurveTo(200, cy, x1, y); ctx.stroke();
+  ctx.restore();
+}
+function phoneIcon(x, y, size, color) {
+  const p = new Path2D("M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z");
+  ctx.save(); ctx.translate(x, y); ctx.scale(size / 24, size / 24);
+  ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.lineJoin = "round"; ctx.stroke(p); ctx.restore();
+}
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function qr(x, y, size) {
+  const g = ctx.createLinearGradient(x, y, x + size, y + size);
+  g.addColorStop(0, "#f1e3bd"); g.addColorStop(1, "#d9bf85");
+  ctx.fillStyle = g; roundRect(x, y, size, size, 14); ctx.fill();
+  if (typeof qrcode !== "function") return;
+  const q = qrcode(0, "M"); q.addData(TG); q.make();
+  const n = q.getModuleCount(), m = (size - 24) / n;
+  ctx.fillStyle = "#16120e";
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) ctx.fillRect(x + 12 + c * m, y + 12 + r * m, m + .02, m + .02);
+}
+function draw(d) {
+  ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
+  const bg = ctx.createRadialGradient(600, 580, 0, 600, 580, 1150);
+  bg.addColorStop(0, "#1d1a17"); bg.addColorStop(1, "#0b0a09");
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#c9a960"; ctx.lineWidth = 2;
+  [[56, 56, 1, 1], [W - 56, 56, -1, 1], [56, H - 56, 1, -1], [W - 56, H - 56, -1, -1]].forEach(([x, y, sx, sy]) => {
+    ctx.beginPath(); ctx.moveTo(x + sx * 170, y); ctx.lineTo(x, y); ctx.lineTo(x, y + sy * 170); ctx.stroke();
+  });
+  ctx.textBaseline = "alphabetic";
+  eye(600, 112, 300);
+  centered("Gift Certificate", 600, 462, '150px "Great Vibes"', "gold");
+  spaced("ПОДАРОЧНЫЙ СЕРТИФИКАТ", 600, 600, '500 50px "Cormorant Garamond"', 9, "gold");
+  centered("на наращивание ресниц", 600, 655, 'italic 38px "Cormorant Garamond"', "#c9b38a");
+  if (d.who) {
+    spaced("ДЛЯ", 600, 752, '400 20px "Montserrat"', 5, "#bda57a");
+    centered(d.who, 600, 822, '500 62px "Cormorant Garamond"', "gold", 900);
+  }
+  const num = d.sum >= 10000 ? d.sum.toLocaleString("ru-RU") : String(d.sum);
+  ctx.font = '500 180px "Cormorant Garamond"'; const wn = ctx.measureText(num).width;
+  ctx.font = '500 60px "Cormorant Garamond"'; const wr = ctx.measureText("руб.").width;
+  const sx = 600 - (wn + 28 + wr) / 2;
+  ctx.font = '500 180px "Cormorant Garamond"'; ctx.textAlign = "left"; ctx.fillStyle = gold(sx, sx + wn); ctx.fillText(num, sx, 1010);
+  ctx.font = '500 60px "Cormorant Garamond"'; ctx.fillStyle = gold(sx + wn + 28, sx + wn + 28 + wr); ctx.fillText("руб.", sx + wn + 28, 1010);
+  const rule = ctx.createLinearGradient(470, 0, 730, 0);
+  rule.addColorStop(0, "rgba(201,169,96,0)"); rule.addColorStop(.5, "#c9a960"); rule.addColorStop(1, "rgba(201,169,96,0)");
+  ctx.fillStyle = rule; ctx.fillRect(470, 1070, 260, 1);
+  spaced("МАСТЕР ПО НАРАЩИВАНИЮ РЕСНИЦ", 600, 1128, '400 22px "Montserrat"', 4, "#bda57a");
+  spaced(MASTER.toUpperCase(), 600, 1186, '400 44px "Cormorant Garamond"', 8, "gold");
+  spaced(`№ ${d.no ? noFmt(d.no) : "______"}  ·  ДЕЙСТВИТЕЛЕН ДО ${ruDate(d.until)}`, 600, 1252, '400 22px "Montserrat"', 4, "#bda57a");
+  phoneIcon(318, 1418, 28, "#d8c49a");
+  ctx.font = '400 26px "Montserrat"'; ctx.fillStyle = "#d8c49a"; ctx.textAlign = "left"; ctx.fillText(PHONE, 360, 1442);
+  qr(690, 1318, 190);
+  centered(TG_TEXT, 785, 1556, '400 20px "Montserrat"', "#d8c49a");
+}
+
+// ---------- связь с таблицей ----------
+async function api(action, payload) {
+  if (!API_URL) throw { message: "Таблица ещё не подключена — адрес веб-приложения не указан." };
+  const pin = store.get("lara_pin");
+  if (!pin) { renderPin(true); throw { code: "pin", message: "Введите PIN вверху страницы." }; }
+  let res;
+  try {
+    // text/plain — без предварительного CORS-запроса, так Google Apps Script принимает POST со сторонней страницы
+    const r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action, pin, ...payload }) });
+    res = await r.json();
+  } catch (e) {
+    throw { message: "Нет связи с таблицей. Проверьте интернет и попробуйте ещё раз." };
+  }
+  if (!res.ok) {
+    if (res.code === "pin") { store.del("lara_pin"); renderPin(true); }
+    throw res;
+  }
+  return res;
+}
+
+// ---------- PIN ----------
+function renderPin(ask) {
+  const bar = $("pinbar");
+  bar.textContent = "";
+  if (!ask && store.get("lara_pin")) {
+    const s = document.createElement("span"); s.textContent = "PIN сохранён";
+    const b = document.createElement("button"); b.className = "linkbtn"; b.type = "button"; b.textContent = "сменить";
+    b.onclick = () => { store.del("lara_pin"); renderPin(true); };
+    bar.append(s, b);
+    return;
+  }
+  const inp = document.createElement("input"); inp.type = "password"; inp.inputMode = "numeric"; inp.placeholder = "PIN"; inp.id = "pin"; inp.autocomplete = "off";
+  const b = document.createElement("button"); b.className = "btn ghost"; b.type = "button"; b.textContent = "Ок"; b.style.padding = "10px 14px";
+  const save = async () => {
+    const v = inp.value.trim(); if (!v) return;
+    store.set("lara_pin", v);
+    b.disabled = true;
+    try { await api("ping", {}); renderPin(false); }
+    catch (e) { bar.querySelector("input") && (bar.querySelector("input").placeholder = e.code === "pin" ? "Неверный PIN" : "PIN"); if (e.code !== "pin") renderPin(false); }
+  };
+  b.onclick = save; inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); save(); } };
+  bar.append(inp, b);
+}
+
+// ---------- вкладка «Новый» ----------
+let issued = null;          // выписанный сертификат: {no, who, sum, issued, until}
+let picUrl = null, ticket = 0;
+function formData() {
+  const iso = $("issued").value || isoToday();
+  return {
+    who: $("who").value.trim(),
+    sum: Math.max(0, Math.round(Number($("sum").value) || 0)),
+    issued: iso, term: Number($("term").value), until: toIso(addMonths(iso, Number($("term").value))),
+  };
+}
+function render() {
+  const d = issued || formData();
+  $("until").textContent = ruDate(d.until);
+  $("noView").textContent = issued ? "№ " + noFmt(issued.no) : "выдаст таблица";
+  draw(d);
+  const t = ++ticket;
+  canvas.toBlob(b => {
+    if (!b || t !== ticket) return;
+    if (picUrl) URL.revokeObjectURL(picUrl);
+    picUrl = URL.createObjectURL(b); $("pic").src = picUrl;
+  }, "image/png");
+}
+function setStatus(id, text, kind) { const s = $(id); s.textContent = text; s.className = "status" + (kind ? " " + kind : ""); }
+function lockForm(lock) { ["who", "sum", "issued", "term"].forEach(id => $(id).disabled = lock); }
+const fileName = c => `Сертификат_${noFmt(c.no)}_${(c.who || "без_имени").replace(/[\\/:*?"<>|]+/g, "").replace(/\s+/g, "_")}.png`;
+const blobNow = () => new Promise(r => canvas.toBlob(r, "image/png"));
+
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (issued) return;
+  const d = formData();
+  if (!d.who) { setStatus("status", "Укажите, кому дарится сертификат.", "err"); $("who").focus(); return; }
+  if (!d.sum) { setStatus("status", "Укажите сумму.", "err"); $("sum").focus(); return; }
+  $("issue").disabled = true; setStatus("status", "Записываю в таблицу…");
+  try {
+    const res = await api("create", d);
+    issued = { ...d, no: res.cert.no };
+    lockForm(true); render();
+    $("issue").hidden = true; $("afterIssue").hidden = false; $("again").hidden = false;
+    $("share").hidden = !(navigator.canShare && navigator.canShare({ files: [new File([new Blob(["x"])], "x.png", { type: "image/png" })] }));
+    setStatus("status", `Сертификат № ${noFmt(issued.no)} записан в таблицу. Скачайте или отправьте картинку.`, "ok");
+  } catch (err) {
+    setStatus("status", err.message || err.error || "Не получилось записать сертификат.", "err");
+  } finally { $("issue").disabled = false; }
+});
+$("download").addEventListener("click", async () => {
+  const b = await blobNow(), a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = fileName(issued); document.body.append(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+});
+$("share").addEventListener("click", async () => {
+  try {
+    const f = new File([await blobNow()], fileName(issued), { type: "image/png" });
+    await navigator.share({ files: [f], title: "Подарочный сертификат" });
+  } catch (e) { if (e && e.name !== "AbortError") setStatus("status", "Отправить не получилось — скачайте картинку.", "err"); }
+});
+$("again").addEventListener("click", () => {
+  issued = null; lockForm(false);
+  $("who").value = ""; $("issued").value = isoToday();
+  $("issue").hidden = false; $("afterIssue").hidden = true; $("again").hidden = true;
+  setStatus("status", ""); render(); $("who").focus();
+});
+["who", "sum", "issued"].forEach(id => $(id).addEventListener("input", render));
+$("term").addEventListener("change", render);
+
+// ---------- вкладка «Проверить» ----------
+function certState(c) {
+  if (c.status === "Использован") return { cls: "bad", text: "Использован " + c.used };
+  if (c.until && c.until < isoToday()) return { cls: "warn", text: "Просрочен" };
+  return { cls: "ok", text: "Действует" };
+}
+function showCert(c, note) {
+  const box = $("checkResult"); box.textContent = "";
+  const st = certState(c);
+  const card = document.createElement("div"); card.className = "card";
+  const top = document.createElement("div"); top.style.cssText = "display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap";
+  const no = document.createElement("span"); no.className = "no"; no.textContent = "№ " + noFmt(c.no);
+  const chip = document.createElement("span"); chip.className = "chip " + st.cls; chip.textContent = st.text;
+  top.append(no, chip);
+  const dl = document.createElement("dl"); dl.className = "kv";
+  [["Кому", c.who || "—"], ["Сумма", money(c.sum)], ["Выдан", ruDate(c.issued)], ["Действителен до", ruDate(c.until)]].forEach(([k, v]) => {
+    const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = v; dl.append(dt, dd);
+  });
+  card.append(top, dl);
+  if (note) { const p = document.createElement("div"); p.className = "status ok"; p.textContent = note; card.append(p); }
+  if (c.status !== "Использован") {
+    const use = document.createElement("button"); use.type = "button"; use.className = "btn"; use.textContent = "Погасить сертификат";
+    use.onclick = () => {
+      use.hidden = true;
+      const cf = document.createElement("div"); cf.className = "confirm";
+      const q = document.createElement("div");
+      q.textContent = `Погасить № ${noFmt(c.no)} на ${money(c.sum)}? Повторно воспользоваться им будет нельзя.` + (st.cls === "warn" ? " Срок действия уже истёк." : "");
+      const row = document.createElement("div"); row.className = "btnrow";
+      const yes = document.createElement("button"); yes.type = "button"; yes.className = "btn"; yes.textContent = "Да, погасить";
+      const no2 = document.createElement("button"); no2.type = "button"; no2.className = "btn ghost"; no2.textContent = "Отмена";
+      no2.onclick = () => { cf.remove(); use.hidden = false; };
+      yes.onclick = async () => {
+        yes.disabled = no2.disabled = true;
+        try { const r = await api("use", { no: c.no }); showCert(r.cert, "Сертификат погашен."); }
+        catch (err) { if (err.cert) showCert(err.cert); setStatus("checkStatus", err.message || err.error || "Не получилось погасить.", "err"); }
+      };
+      row.append(yes, no2); cf.append(q, row); card.append(cf);
+    };
+    card.append(use);
+  }
+  box.append(card);
+}
+async function checkNo(n) {
+  setStatus("checkStatus", "Ищу в таблице…"); $("checkResult").textContent = "";
+  try { const r = await api("check", { no: n }); setStatus("checkStatus", ""); showCert(r.cert); }
+  catch (err) { setStatus("checkStatus", err.message || err.error || "Не получилось проверить.", "err"); }
+}
+$("checkForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const n = parseInt($("checkNo").value.replace(/\D/g, ""), 10);
+  if (!n) { setStatus("checkStatus", "Введите номер с сертификата.", "err"); return; }
+  checkNo(n);
+});
+
+// ---------- вкладка «Журнал» ----------
+async function loadLog() {
+  setStatus("logStatus", "Загружаю…"); $("log").textContent = "";
+  try {
+    const r = await api("list", {});
+    setStatus("logStatus", r.items.length ? "" : "Сертификатов пока нет.");
+    r.items.forEach(c => {
+      const st = certState(c);
+      const it = document.createElement("button"); it.type = "button"; it.className = "item";
+      const n = document.createElement("span"); n.className = "n"; n.textContent = noFmt(c.no);
+      const w = document.createElement("span"); w.className = "w";
+      const b = document.createElement("b"); b.textContent = c.who || "—";
+      const s = document.createElement("span"); s.textContent = `${money(c.sum)} · до ${ruDate(c.until)}`;
+      w.append(b, s);
+      const chip = document.createElement("span"); chip.className = "chip " + st.cls; chip.textContent = st.cls === "bad" ? "Использован" : st.text;
+      it.append(n, w, chip);
+      it.onclick = () => { switchTab("check"); $("checkNo").value = c.no; checkNo(c.no); };
+      $("log").append(it);
+    });
+  } catch (err) { setStatus("logStatus", err.message || err.error || "Не получилось загрузить журнал.", "err"); }
+}
+$("reload").addEventListener("click", loadLog);
+
+// ---------- вкладки ----------
+function switchTab(name) {
+  document.querySelectorAll("nav button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
+  ["new", "check", "log"].forEach(t => $("view-" + t).hidden = t !== name);
+  if (name === "log") loadLog();
+}
+document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+// ---------- старт ----------
+$("issued").value = isoToday();
+renderPin(!store.get("lara_pin"));
+Promise.all([
+  document.fonts.load('150px "Great Vibes"', "Gift Certificate"),
+  document.fonts.load('500 50px "Cormorant Garamond"', "ПОДАРОЧНЫЙ СЕРТИФИКАТ руб. 0123456789"),
+  document.fonts.load('italic 38px "Cormorant Garamond"', "на наращивание ресниц"),
+  document.fonts.load('400 44px "Cormorant Garamond"', "ЧУРИЛОВА ЛАРИСА"),
+  document.fonts.load('400 22px "Montserrat"', "МАСТЕР № ДЕЙСТВИТЕЛЕН t.me +7 (906)"),
+]).catch(() => {}).finally(render);
+render();
+</script>
+</body>
+</html>

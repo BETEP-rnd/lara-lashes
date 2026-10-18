@@ -467,10 +467,16 @@ $("checkForm").addEventListener("submit", e => {
 });
 
 // ---------- вкладка «Журнал» ----------
+// Каждая загрузка получает свой номер; ответ устаревшей загрузки отбрасывается,
+// а список очищается только когда пришёл ответ — иначе две загрузки подряд задваивали строки.
+let logTicket = 0;
 async function loadLog() {
-  setStatus("logStatus", "Загружаю…"); $("log").textContent = "";
+  const t = ++logTicket;
+  setStatus("logStatus", "Загружаю…"); $("reload").disabled = true;
   try {
     const r = await api("list", {});
+    if (t !== logTicket) return;
+    $("log").textContent = "";
     setStatus("logStatus", r.items.length ? "" : "Сертификатов пока нет.");
     r.items.forEach(c => {
       const st = certState(c);
@@ -485,7 +491,11 @@ async function loadLog() {
       it.onclick = () => { switchTab("check"); $("checkNo").value = c.no; checkNo(c.no); };
       $("log").append(it);
     });
-  } catch (err) { setStatus("logStatus", err.message || err.error || "Не получилось загрузить журнал.", "err"); }
+  } catch (err) {
+    if (t === logTicket) setStatus("logStatus", err.message || err.error || "Не получилось загрузить журнал.", "err");
+  } finally {
+    if (t === logTicket) $("reload").disabled = false;
+  }
 }
 $("reload").addEventListener("click", loadLog);
 
